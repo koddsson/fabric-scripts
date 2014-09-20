@@ -1,5 +1,5 @@
 from fabric.colors import red, green
-from fabric.api import task, sudo, quiet, env
+from fabric.api import task, sudo, env
 
 
 @task
@@ -8,12 +8,15 @@ def apt_install(package_name):
     cmd = 'apt-get install {package_name}'.format(package_name=package_name)
     results = sudo(cmd, quiet=True)
     if not results.succeeded:
-        print(red(results))
-        print(red('[{host}] Installing {package_name} failed'.format(
-            host=env.host, package_name=package_name)))
+        r = results + '\n' + '[{host}] Installing {package_name} failed'.format(
+            host=env.host, package_name=package_name)
+        print(red(r))
+        return r
     else:
-        print(green('[{host}] Installing {package_name} succeeded'.format(
-            host=env.host, package_name=package_name)))
+        r = '[{host}] Installing {package_name} succeeded'.format(
+            host=env.host, package_name=package_name)
+        print(green(r))
+        return r
 
 
 @task
@@ -22,8 +25,12 @@ def apt_is_installed(package_name):
         package_name=package_name)
     results = sudo(cmd, quiet=True)
     if results.succeeded:
-        print(green('[{host}] {package_name} is installed'.format(
-            host=env.host, package_name=package_name)))
+        r = '[{host}] {package_name} is installed'.format(
+            host=env.host, package_name=package_name)
+        print(green(r))
+        return r
     else:
-        print(red('[{host}] {package_name} is not installed'.format(
-            host=env.host, package_name=package_name)))
+        r = '[{host}] {package_name} is not installed'.format(
+            host=env.host, package_name=package_name)
+        print(red(r))
+        return r
